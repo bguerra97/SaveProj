@@ -7,7 +7,7 @@
 using namespace std;
 
 class Customer{
-private:
+public:
 	string last_name, first_name, street_address, unit, city, state, zip, dob, ssn, email, mobile, account;
 
 public:

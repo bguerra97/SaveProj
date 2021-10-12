@@ -1,2 +1,4 @@
 C:\Users\Baltazar Guerra\Documents\GitHub\SaveProj\C++ Projects\Debug\C++ Projects.exe
 C:\Users\Baltazar Guerra\Documents\GitHub\SaveProj\C++ Projects\Debug\C++ Projects.pdb
+C:\Users\bguer\Documents\GitHub\SaveProj\C++ Projects\Debug\C++ Projects.exe
+C:\Users\bguer\Documents\GitHub\SaveProj\C++ Projects\Debug\C++ Projects.pdb

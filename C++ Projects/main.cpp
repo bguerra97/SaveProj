@@ -1,6 +1,8 @@
 #include "Customer.h"
 #include <unordered_map>
 #include <math.h>
+//#include <mysql.h>
+#include <algorithm>
 
 // Reads csv file and returns map of Customers
 unordered_map<string, Customer> getCustomers() {
@@ -50,22 +52,32 @@ void RuleOne(unordered_map<string, Customer> customers) {
 	ofstream output("Rule1Transactions.csv");
 	output << "Name,Account Number,Transaction Number,Merchant,Transaction Amount" << endl;
 	cout << "Printing transactions flagged fraudulent for high value: " << endl;
+	vector<double> vals;
 	for (auto const& x : customers) {
 		Customer client = x.second;
-		double sum = 0;
-		int n = 0;
+		vals.clear();
+		//double sum = 0;
+		//int n = 0;
 		for (Transaction sale : client.purchases) {
-			sum += stod(sale.amount);
-			++n;
+			//sum += stod(sale.amount);
+			//++n;
+			vals.push_back(stod(sale.amount));
 		}
-		double mean = sum / (double)n;
-		double sigma = 0;
+		sort(vals.begin(), vals.end());
+		int fqrt = vals[ceil((double)vals.size() / 4)];
+		int tqrt = vals[ceil((double)(vals.size() * 3 / 4))];
+		int iqr = tqrt - fqrt;
+		int max = (int)((double)tqrt + 1.5 * (double)iqr);
+		
+		//double mean = sum / (double)n;
+		//double sigma = 0;
 		for (Transaction sale : client.purchases) {
-			sigma += pow(stod(sale.amount) - mean, 2);
+			//sigma += pow(stod(sale.amount) - mean, 2);
 		}
-		double stddev = pow(sigma / ((double)(n - 1)), 0.5);
+		//double stddev = pow(sigma / ((double)(n - 1)), 0.5);
 		for (Transaction sale : client.purchases) {
-			if (stod(sale.amount) > (mean + 3.5 * stddev)) {  // Might need to change multiplier of standard deviation
+			//if (stod(sale.amount) > (mean + 3.5 * stddev)) {  // Might need to change multiplier of standard deviation
+			if (stod(sale.amount) > (double)max){
 				cout << "Name: " << client.first_name + ' ' + client.last_name << endl;
 				cout << "Account Number: " << client.account << endl;
 				cout << "Transaction Number: " << sale.trans_num << endl;
@@ -117,6 +129,17 @@ int main() {
 	vector<Transaction> transactions = getTransactions();
 	RuleTwo(customers, transactions);
 	RuleOne(customers);
+	/* Small snippet to test connection to MySQL Database
+	MYSQL* conn;
+	MYSQL_ROW row;
+	MYSQL_RES* res;
+	conn = mysql_init(0);
+	conn = mysql_real_connect(conn, "localhost", "root", "Password56789&&!!", "SaveProj", 3306, NULL, 0);
+	if (conn) {
+		cout << "Connected to DB!" << endl;
+	}
+	else cout << "Connection failed!" << endl;
+	*/
 	system("pause");
 	return 0;
 }

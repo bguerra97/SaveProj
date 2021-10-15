@@ -1,12 +1,12 @@
 #include "Customer.h"
-#include <map>
+#include <unordered_map>
 #include <math.h>
 
 // Reads csv file and returns map of Customers
-map<string, Customer> getCustomers() {
+unordered_map<string, Customer> getCustomers() {
 	string line;
 	ifstream myfile("account_info.csv");
-	map<string, Customer> customers;
+	unordered_map<string, Customer> customers;
 	getline(myfile, line);
 	stringstream ss(line);
 	while (getline(myfile, line)) {
@@ -46,7 +46,7 @@ string parseState(string desc) {
 }
 
 // Checks for irregularities in amount of purchase
-void RuleOne(map<string, Customer> customers) {
+void RuleOne(unordered_map<string, Customer> customers) {
 	ofstream output("Rule1Transactions.csv");
 	output << "Name,Account Number,Transaction Number,Merchant,Transaction Amount" << endl;
 	cout << "Printing transactions flagged fraudulent for high value: " << endl;
@@ -86,7 +86,7 @@ void RuleOne(map<string, Customer> customers) {
 }
 
 // Checks for irregularities in location of purchase and makes list of transactions for each customer
-void RuleTwo(map<string, Customer> &customers, vector<Transaction> transactions) {
+void RuleTwo(unordered_map<string, Customer> &customers, vector<Transaction> transactions) {
 	ofstream output("Rule2Transactions.csv");
 	output << "Name,Account Number,Transaction Number,Expected Transaction Location,Actual Transaction Location" << endl;
 	cout << "Printing files flagged for wrong address: " << endl;
@@ -113,7 +113,7 @@ void RuleTwo(map<string, Customer> &customers, vector<Transaction> transactions)
 }
 
 int main() {
-	map<string, Customer> customers = getCustomers();
+	unordered_map<string, Customer> customers = getCustomers();
 	vector<Transaction> transactions = getTransactions();
 	RuleTwo(customers, transactions);
 	RuleOne(customers);

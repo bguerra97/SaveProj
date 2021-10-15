@@ -31,3 +31,7 @@ void Customer::populate(stringstream& ss) {
 	getline(ss, elem, ',');
 	this->account = elem;
 }
+
+void Customer::addPurchase(Transaction purchase) {
+	this->purchases.push_back(purchase);
+}

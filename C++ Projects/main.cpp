@@ -1,7 +1,8 @@
-#include "Transaction.h"
+#include "Customer.h"
 #include <map>
+#include <math.h>
 
-// Reads csv file and returns vector of Customers
+// Reads csv file and returns map of Customers
 map<string, Customer> getCustomers() {
 	string line;
 	ifstream myfile("account_info.csv");
@@ -35,6 +36,7 @@ vector<Transaction> getTransactions() {
 	return transactions;
 }
 
+// Reads merchant description to parse out the State where it happened
 string parseState(string desc) {
 	string state = desc.substr(desc.size() - 2);
 	if (state == "US") {
@@ -43,14 +45,70 @@ string parseState(string desc) {
 	return state;
 }
 
-// FIXME: see why some states don't show
-void RuleTwo(map<string, Customer> customers, vector<Transaction> transactions) {
-	for (Transaction sale : transactions) {
-		if(customers[sale.account].state != parseState(sale.merch_desc)){
-			cout << "Client is in: " << customers[sale.account].state << endl << "Transaction was in: " << parseState(sale.merch_desc) << endl << endl;
+// Checks for irregularities in amount of purchase
+void RuleOne(map<string, Customer> customers) {
+	ofstream output("Rule1Transactions.csv");
+	output << "Name,Account Number,Transaction Number,Merchant,Transaction Amount" << endl;
+	cout << "Printing transactions flagged fraudulent for high value: " << endl;
+	for (auto const& x : customers) {
+		Customer client = x.second;
+		double sum = 0;
+		int n = 0;
+		for (Transaction sale : client.purchases) {
+			sum += stod(sale.amount);
+			++n;
+		}
+		double mean = sum / (double)n;
+		double sigma = 0;
+		for (Transaction sale : client.purchases) {
+			sigma += pow(stod(sale.amount) - mean, 2);
+		}
+		double stddev = pow(sigma / ((double)(n - 1)), 0.5);
+		for (Transaction sale : client.purchases) {
+			if (stod(sale.amount) > (mean + 3.5 * stddev)) {  // Might need to change multiplier of standard deviation
+				cout << "Name: " << client.first_name + ' ' + client.last_name << endl;
+				cout << "Account Number: " << client.account << endl;
+				cout << "Transaction Number: " << sale.trans_num << endl;
+				cout << "Merchant: " << sale.merch_desc << endl;
+				cout << "Transaction Amount: $" << sale.amount << endl;
+				cout << "---------------------------------------------------------" << endl << endl;
+
+				output << client.first_name + ' ' + client.last_name + ',';
+				output << client.account << ',';
+				output << sale.trans_num << ',';
+				output << sale.merch_desc << ',';
+				output << sale.amount << endl;
+			}
 		}
 	}
 
+	output.close();
+}
+
+// Checks for irregularities in location of purchase and makes list of transactions for each customer
+void RuleTwo(map<string, Customer> &customers, vector<Transaction> transactions) {
+	ofstream output("Rule2Transactions.csv");
+	output << "Name,Account Number,Transaction Number,Expected Transaction Location,Actual Transaction Location" << endl;
+	cout << "Printing files flagged for wrong address: " << endl;
+	for (Transaction sale : transactions) {
+		customers[sale.account].addPurchase(sale);
+		if(customers[sale.account].state != parseState(sale.merch_desc)){
+			cout << "Name: " << (customers[sale.account].first_name + ' ' + customers[sale.account].last_name) << endl;
+			cout << "Account Number: " << sale.account << endl;
+			cout << "Transaction Number: " << sale.trans_num << endl;
+			cout << "Expected Transcation Location: " << customers[sale.account].state << endl;
+			cout << "Actual Transaction Location: " << parseState(sale.merch_desc) << endl;
+			cout << "---------------------------------------------------------" << endl << endl;
+
+			output << (customers[sale.account].first_name + ' ' + customers[sale.account].last_name + ',');
+			output << sale.account << ',';
+			output << sale.trans_num << ',';
+			output << customers[sale.account].state << ',';
+			output << parseState(sale.merch_desc) << endl;
+		}
+	}
+
+	output.close();
 	return;
 }
 
@@ -58,6 +116,7 @@ int main() {
 	map<string, Customer> customers = getCustomers();
 	vector<Transaction> transactions = getTransactions();
 	RuleTwo(customers, transactions);
+	RuleOne(customers);
 	system("pause");
 	return 0;
 }

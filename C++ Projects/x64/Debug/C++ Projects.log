@@ -1,0 +1,14 @@
+﻿  main.cpp
+C:\Users\Baltazar Guerra\Documents\GitHub\SaveProj\C++ Projects\main.cpp(67,23): warning C4244: 'argument': conversion from 'double' to 'const unsigned __int64', possible loss of data
+C:\Users\Baltazar Guerra\Documents\GitHub\SaveProj\C++ Projects\main.cpp(67,12): warning C4244: 'initializing': conversion from '_Ty' to 'int', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+C:\Users\Baltazar Guerra\Documents\GitHub\SaveProj\C++ Projects\main.cpp(68,23): warning C4244: 'argument': conversion from 'double' to 'const unsigned __int64', possible loss of data
+C:\Users\Baltazar Guerra\Documents\GitHub\SaveProj\C++ Projects\main.cpp(68,12): warning C4244: 'initializing': conversion from '_Ty' to 'int', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+  C++ Projects.vcxproj -> C:\Users\Baltazar Guerra\Documents\GitHub\SaveProj\C++ Projects\x64\Debug\C++ Projects.exe

@@ -55,6 +55,9 @@ void RuleOne(unordered_map<string, Customer> customers) {
 	vector<double> vals;
 	for (auto const& x : customers) {
 		Customer client = x.second;
+		if (client.last_name == "Doe") {
+			cout << "Here" << endl;
+		}
 		vals.clear();
 		//double sum = 0;
 		//int n = 0;
@@ -64,8 +67,8 @@ void RuleOne(unordered_map<string, Customer> customers) {
 			vals.push_back(stod(sale.amount));
 		}
 		sort(vals.begin(), vals.end());
-		int fqrt = vals[ceil((double)vals.size() / 4)];
-		int tqrt = vals[ceil((double)(vals.size() * 3 / 4))];
+		int fqrt = vals[floor((((double)(vals.size())) / 4.0))];
+		int tqrt = vals[floor((((double)(vals.size())) * 3.0 / 4.0))];
 		int iqr = tqrt - fqrt;
 		int max = (int)((double)tqrt + 1.5 * (double)iqr);
 		

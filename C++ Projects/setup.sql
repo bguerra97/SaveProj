@@ -38,3 +38,31 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
+
+CREATE TABLE IF NOT EXISTS Rule1Transactions(
+	name VARCHAR (128) NOT NULL,
+    account_number VARCHAR (128) NOT NULL,
+    transaction_number INT NOT NULL,
+    merchant VARCHAR(1024) NOT NULL,
+    transaction_amount VARCHAR(1024) NOT NULL
+);
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Rule1Transactions.csv'
+INTO TABLE Rule1Transactions
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+CREATE TABLE IF NOT EXISTS Rule2Transactions(
+	name VARCHAR (128) NOT NULL,
+    account_number VARCHAR (128) NOT NULL,
+    transaction_number INT NOT NULL,
+    expected_transaction_location VARCHAR(32) NOT NULL,
+    actual_transaction_location VARCHAR(32) NOT NULL
+);
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Rule2Transactions.csv'
+INTO TABLE Rule2Transactions
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;

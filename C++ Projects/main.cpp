@@ -1,7 +1,6 @@
 #include "Customer.h"
 #include <unordered_map>
 #include <math.h>
-//#include <mysql.h>
 #include <algorithm>
 
 // Reads csv file and returns map of Customers
@@ -47,7 +46,9 @@ string parseState(string desc) {
 	return state;
 }
 
-// Checks for irregularities in amount of purchase
+/* Checks for irregularities in amount of purchase
+ * Using median as reference to determine irregular amounts
+*/
 void RuleOne(unordered_map<string, Customer> customers) {
 	ofstream output("Rule1Transactions.csv");
 	output << "Name,Account Number,Transaction Number,Merchant,Transaction Amount" << endl;
@@ -55,32 +56,16 @@ void RuleOne(unordered_map<string, Customer> customers) {
 	vector<double> vals;
 	for (auto const& x : customers) {
 		Customer client = x.second;
-		if (client.last_name == "Doe") {
-			cout << "Here" << endl;
-		}
 		vals.clear();
-		//double sum = 0;
-		//int n = 0;
 		for (Transaction sale : client.purchases) {
-			//sum += stod(sale.amount);
-			//++n;
 			vals.push_back(stod(sale.amount));
 		}
+
 		sort(vals.begin(), vals.end());
-		int fqrt = vals[floor((((double)(vals.size())) / 4.0))];
-		int tqrt = vals[floor((((double)(vals.size())) * 3.0 / 4.0))];
-		int iqr = tqrt - fqrt;
-		int max = (int)((double)tqrt + 1.5 * (double)iqr);
-		
-		//double mean = sum / (double)n;
-		//double sigma = 0;
+		double median = vals[floor(((double)(vals.size()) / 2.0))];
+
 		for (Transaction sale : client.purchases) {
-			//sigma += pow(stod(sale.amount) - mean, 2);
-		}
-		//double stddev = pow(sigma / ((double)(n - 1)), 0.5);
-		for (Transaction sale : client.purchases) {
-			//if (stod(sale.amount) > (mean + 3.5 * stddev)) {  // Might need to change multiplier of standard deviation
-			if (stod(sale.amount) > (double)max){
+			if (stod(sale.amount) > median*20){
 				cout << "Name: " << client.first_name + ' ' + client.last_name << endl;
 				cout << "Account Number: " << client.account << endl;
 				cout << "Transaction Number: " << sale.trans_num << endl;
@@ -98,6 +83,7 @@ void RuleOne(unordered_map<string, Customer> customers) {
 	}
 
 	output.close();
+	return;
 }
 
 // Checks for irregularities in location of purchase and makes list of transactions for each customer
